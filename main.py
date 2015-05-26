@@ -55,12 +55,13 @@ class MainHandler(webapp2.RequestHandler):
 
 class MatchSubmit(webapp2.RequestHandler):
     def post(self):
-        # Handle incoming form data
-
-
+        """Handles incoming form data"""
         user = users.get_current_user()
-
         account = globals.get_or_create_account(user)
+        word = self.request.get('word')
+        partner = self.request.get('partner_id')
+
+
 
 class PageNotFoundHandler(webapp2.RequestHandler):
     def get(self):
