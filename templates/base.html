@@ -7,8 +7,8 @@
     <title>{% block title %}Say the Same Thing Clone - Default Title{% endblock %}</title>
 
     <!--Custom css -->
-	{% block main_style %}<link href="/static/css/GRACE'S STYLE SHEET HERE" rel="stylesheet">{% endblock %}
-  <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+	{% block main_style %}<link href="/static/css/maincss.css" rel="stylesheet">{% endblock %}
+  <link href='http://fonts.googleapis.com/css?family=Dekko' rel='stylesheet' type='text/css'>
 
     <!-- Bootstrap -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -23,46 +23,36 @@
   </head>
   <body class="body">
 {% block navbar %}
-	<nav id="logout" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container-fluid">
-          <div class="container">
-            <div class="row">
-  		  		<div class="navbar-header col-md-12">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-  	                    <a class="navbar-brand" href="/"><img class="logo" src="/static/images/LOGO.png" alt="say the Same Thing Clone"></a>
-                          <div class="login">
-                              {%if not logged_out %}
-                                  <ul class="nav navbar-nav navbar-right">
-                                      <li><p class="navbar-text">
-                                          Logged in as {{ user }} - <a href="{{ logout_url }}">Log out</a>
-                                      </p></li>
-                                  </ul>
-                                  {% endif %}
-                                  {% if logged_out %}
-                                  <ul class="nav navbar-nav navbar-right">
-                                      <p class="navbar-text">
-                                          <li><a href="{{ logged_out }}">Log in to Play</a></li>
-                                      </p>
-                                  </ul>
-                              {% endif %}
-                          </div><!--/login-->
-
+          <div class="main container">
+            <div class="header row">
+  		  		<div class="head col-md-12">
+              <div class="col-xs-9">
+  	                    <a href="/"><img class="logo" src="/static/images/saylogo.png" alt="Say the Same Thing Clone"></a>
+              </div>
+                  <div class="login col-xs-3">
+                      {%if not logged_out %}
+                          <ul class="nav navbar-nav navbar-right">
+                              <li><h3>
+                                  Logged in as {{ user }} - <a href="{{ logout_url }}">Log out</a>
+                              </h3></li>
+                          </ul>
+                          {% endif %}
+                          {% if logged_out %}
+                          <ul class="nav navbar-nav navbar-right">
+                              <h3>
+                                  <li><a href="{{ logged_out }}">Log in to Play</a></li>
+                              </h3>
+                          </ul>
+                      {% endif %}
+                  </div><!--/login-->
                 </div><!--/navbar-header-->
             </div><!--/row-->
           </div><!--/container-->
-
-        </div><!--/container-->
-    </nav>
 {% endblock %}
 
 
-<div class="container">
-  <div class="maincontent col-md-12">
+<div class="content container">
+  <div class="col-md-12">
     {% block content %}
     {% endblock %}
   </div><!--/maincontent-->
