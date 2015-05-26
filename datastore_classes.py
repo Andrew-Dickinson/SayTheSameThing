@@ -25,6 +25,7 @@ class Pair(ndb.Model):
 class Account(ndb.Model):
     """Stores data for an individual account"""
     nickname = ndb.StringProperty()
+    active_match = ndb.StringProperty()
 
 
 class Match(ndb.Model):

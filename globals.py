@@ -10,6 +10,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+no_match_active_id = '0'
 
 def get_or_create_account(user):
     """Called periodically (all pages) to get the current user, or to create a new one if null"""
