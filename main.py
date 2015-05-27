@@ -6,6 +6,8 @@ import jinja2
 import os
 import globals
 
+from datastore_classes import pair_key, match_key, account_key, Account, Pair, Match
+
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import users
 
@@ -60,6 +62,19 @@ class MatchSubmit(webapp2.RequestHandler):
         account = globals.get_or_create_account(user)
         word = self.request.get('word')
         partner = self.request.get('partner_id')
+        match_number = self.request.get('match_num')
+
+        user_is_host = partner[0] == globals.host_char
+        partner_id = partner[1::]
+
+        pair_key_val = None
+        match = None
+        if user_is_host:
+            pair_key_val = pair_key(account.key.id(), partner_id)
+            match = match_key(match_number, pair_key_val).get()
+
+        else:
+            pair = pair_key(partner_id, account.key.id()).get()
 
 
 
