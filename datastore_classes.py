@@ -18,8 +18,7 @@ def match_key(match_id, pair_key_val):
 
 class Pair(ndb.Model):
     """Stores players in the pair and references to the pair's matches"""
-    players = ndb.IntegerProperty(repeated=True)
-    matches = ndb.IntegerProperty(repeated=True)
+    current_match_number = ndb.IntegerProperty()
 
 
 class Account(ndb.Model):
@@ -31,5 +30,6 @@ class Account(ndb.Model):
 class Match(ndb.Model):
     """Stores all the data for an active or past match"""
     active = ndb.BooleanProperty()
+    won = ndb.BooleanProperty()
     user_1_list = ndb.StringProperty(repeated=True)
     user_2_list = ndb.StringProperty(repeated=True)

@@ -10,6 +10,8 @@ from datastore_classes import pair_key, match_key, account_key, Account, Pair, M
 
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import users
+from google.appengine.ext import ndb
+
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -34,15 +36,39 @@ class MainHandler(webapp2.RequestHandler):
             account = globals.get_or_create_account(user)
             match_key_id = account.active_match
 
-            # if match_key_id == globals.no_match_active_id:
-            #     # User should be prompted to start a match
-            # else:
-            #     # Display the match screen
+            user_wordlist = None
+            partner_wordlist = None
+            if match_key_id == globals.no_match_active_id:
+                match_active = False
+            else:
+                match_active = True
+                match = ndb.Key(urlsafe=match_key_id).get()
+                match_won = match.won
+                if match.key.parent().parent().id() == account.key.id():
+                    user_wordlist = match.user_1_list
+                    partner_wordlist = match.user_2_list
+                else:
+                    partner_wordlist = match.user_1_list
+                    user_wordlist = match.user_2_list
 
+                if len(user_wordlist) != len(partner_wordlist):
+                    if len(user_wordlist) > len(partner_wordlist):
+                        partner_wordlist.append("Waiting...")
+                    else:
+                        partner_wordlist[-1] = "*******"
+                        user_wordlist.append("-")
+
+            update_text = self.request.get('updated')
 
             #Send html data to browser
             template_values = {'user': user.nickname(),
-                               'logout_url': logout_url
+                               'logout_url': logout_url,
+                               'match_key': match_key_id,
+                               'match_active': match_active,
+                               'match_won': match_won,
+                               'update_text': update_text,
+                               'user_wordlist': reversed(user_wordlist),
+                               'partner_wordlist': reversed(partner_wordlist),
                                }
             template = JINJA_ENVIRONMENT.get_template('templates/index.html')
             self.response.write(template.render(template_values))
@@ -61,20 +87,109 @@ class MatchSubmit(webapp2.RequestHandler):
         user = users.get_current_user()
         account = globals.get_or_create_account(user)
         word = self.request.get('word')
-        partner = self.request.get('partner_id')
-        match_number = self.request.get('match_num')
+        match_key_id = self.request.get('match_key')
 
-        user_is_host = partner[0] == globals.host_char
-        partner_id = partner[1::]
+        match = ndb.Key(urlsafe=match_key_id).get()
 
-        pair_key_val = None
-        match = None
-        if user_is_host:
-            pair_key_val = pair_key(account.key.id(), partner_id)
-            match = match_key(match_number, pair_key_val).get()
+        if match.active and not match.won:
+            user_is_host = match.key.parent().parent().id() == account.key.id()
 
+            if user_is_host:
+                user_word_list = match.user_1_list
+                partner_word_list = match.user_2_list
+            else:
+                user_word_list = match.user_2_list
+                partner_word_list = match.user_1_list
+
+            if len(user_word_list) <= len(partner_word_list):
+                user_word_list.append(word)
+
+            if len(user_word_list) == len(partner_word_list):
+                if str.lower(str(user_word_list[-1])) == str.lower(str(partner_word_list[-1])):
+                    match.active = False
+                    match.won = True
+
+            match.put()
+
+        self.redirect('/')
+
+    def handle_exception(self, exception, debug_mode):
+        if debug_mode:
+            super(type(self), self).handle_exception(exception, debug_mode)
         else:
-            pair = pair_key(partner_id, account.key.id()).get()
+            template = JINJA_ENVIRONMENT.get_template('templates/500.html')
+            self.response.write(template.render())
+
+
+class MatchStart(webapp2.RequestHandler):
+    def post(self):
+        """Handles the start of a partner connection"""
+        user = users.get_current_user()
+        account = globals.get_or_create_account(user)
+        partner_name = self.request.get('partner_nickname')
+
+        partner = Account.query(Account.nickname == partner_name).fetch()
+
+        if partner[0]:
+            if partner[0].active_match == globals.no_match_active_id:
+                pair_key_val = pair_key(account.key.id(), partner[0].key.id())
+                pair = Pair.get_or_insert(pair_key_val.id(), parent=pair_key_val.parent(), current_match_number=-1)
+                pair.put()
+
+                match_key_val = match_key(pair.current_match_number + 1, pair_key_val)
+
+                partner[0].active_match = match_key_val.urlsafe()
+                partner[0].put()
+
+                account.active_match = match_key_val.urlsafe()
+                account.put()
+
+                match = Match.get_or_insert(match_key_val.id(), parent=match_key_val.parent())
+                match.put()
+
+                globals.onto_next_match(account, match_key(pair.current_match_number, pair_key_val))
+
+                self.redirect('/')
+            else:
+                self.redirect("/?updated=User in Game Already")
+        else:
+            self.redirect("/?updated=Bad Email Address")
+
+    def handle_exception(self, exception, debug_mode):
+        if debug_mode:
+            super(type(self), self).handle_exception(exception, debug_mode)
+        else:
+            template = JINJA_ENVIRONMENT.get_template('templates/500.html')
+            self.response.write(template.render())
+
+
+class NewGame(webapp2.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+        account = globals.get_or_create_account(user)
+        match_key_id = self.request.get('match_key')
+        match = ndb.Key(urlsafe=match_key_id).get()
+
+        pair = match.key.parent().get()
+
+        match.active = False
+        if match.won != True:
+            match.won = False
+
+        match.put()
+        pair.current_match_number += 1
+        pair.put()
+
+        globals.onto_next_match(account, match)
+
+        self.redirect('/')
+
+    def handle_exception(self, exception, debug_mode):
+        if debug_mode:
+            super(type(self), self).handle_exception(exception, debug_mode)
+        else:
+            template = JINJA_ENVIRONMENT.get_template('templates/500.html')
+            self.response.write(template.render())
 
 
 
@@ -86,6 +201,9 @@ class PageNotFoundHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
+    ('/startMatch', MatchStart),
+    ('/playMatch', MatchSubmit),
+    ('/newMatch', NewGame),
     ('/.*', PageNotFoundHandler)
 ], debug=True)
 

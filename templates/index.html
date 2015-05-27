@@ -3,54 +3,91 @@
 {% block title %}Say the Same Thing Clone - Home{% endblock %}
 
 {% block content %}
-	<div class="input row">
-		<div class="style">
-				<div class="col-xs-10">
-					<h4> Next Word Guess --- **input thingy okay** </h4>
-				</div>
+    {% if not logged_out %}
+        {% if match_active %}
+            <div class="input row">
+                <div class="style">
+                    <div class="col-xs-10">
+                        {% if not match_won %}
+                            <h4>Next Word Guess</h4>
+                            <form action="/playMatch" method="post">
+                                <input type="hidden" value="{{ match_key }}" name="match_key">
+                                <input id="word_input" type="text" value="" name="word">
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </form>
+                        {% else %}
+                            <h3>You Won!</h3>
+                            <img src="/static/images/HighFive.gif" height="230px">
+                            <img src="/static/images/celebrate.gif" height="230px">
+                            <img src="/static/images/sam.gif" height="230px">
+                        {% endif %}
+                    </div>
+                    <div class="newgame col-xs-2">
+                        <form action="/newMatch" method="post">
+                            <input type="hidden" value="{{ match_key }}" name="match_key">
+                            <button class="btn btn-default"> New Game </button>
+                        </form>
+                    </div>
+                </div>
+            </div><!--/input-->
 
-				<div class="newgame col-xs-2">
-					<button> New Game </button>
-				</div>
-		</div>
-	</div><!--/input-->
 
-	<div class="content row">
-		<div class="words col-md-5">
-			<div class="guessheader row">
-				<div class="guesshead col-md-12">
-					<h3> Your Words </h3>
-				</div><!--/guesshead-->
-			</div><!--/guessheader-->
+            <div class="content row">
+                <div class="words col-md-5">
+                    <div class="guessheader row">
+                        <div class="guesshead col-md-12">
+                            <h3> Your Words </h3>
+                        </div><!--/guesshead-->
+                    </div><!--/guessheader-->
 
-			<div class="guess1 row">
-				<div class="guesswords col-md-12">
-					<table class="guesses">
-						<tr><td>WORD1<td></tr>
-						<tr><td>WORD2<td></tr>
-						<tr><td>WORD3<td></tr>
-					</table><!--/guesses-->
-				</div><!--/guesswords-->
-			</div><!--/guess1-->
-		</div>
+                    <div class="guess1 row">
+                        <div class="guesswords col-md-12">
+                            <table class="guesses">
+                                {% for word in user_wordlist %}
+                                    <tr><td>{{ word }}</td></tr>
+                                {% endfor %}
+                            </table><!--/guesses-->
+                        </div><!--/guesswords-->
+                    </div><!--/guess1-->
+                </div>
 
-		<div class="words col-md-5">
-			<div class="guessheader row">
-				<div class="guesshead col-md-12">
-					<h3> Partner's Words </h3>
-				</div><!--/guesshead-->
-			</div><!--/guessheader-->
+                <div class="words col-md-5">
+                    <div class="guessheader row">
+                        <div class="guesshead col-md-12">
+                            <h3> Partner's Words </h3>
+                        </div><!--/guesshead-->
+                    </div><!--/guessheader-->
 
-			<div class="guess2 row">
-				<div class="guesswords col-md-12">
-					<table class="guesses">
-						<tr><td>WORD4<td></tr>
-						<tr><td>WORD5<td></tr>
-						<tr><td>WORD6<td></tr>
-					</table><!--/guesses-->
-				</div><!--/guesswords-->
-			</div><!--/guess1-->
-		</div>
-	</div><!--/content-->
-
+                    <div class="guess2 row">
+                        <div class="guesswords col-md-12">
+                            <table class="guesses">
+                                {% for word in partner_wordlist %}
+                                    <tr><td>{{ word }}</td></tr>
+                                {% endfor %}
+                            </table><!--/guesses-->
+                        </div><!--/guesswords-->
+                    </div><!--/guess1-->
+                </div>
+            </div><!--/content-->
+        {% else %}
+            <div class="content row">
+                <h2>Not playing...</h2>
+                <p>Type the email address of your partner to start</p>
+                {% if update_text %}
+                    <div class="alert alert-danger">
+                      <strong>Error!</strong> {{ update_text }}
+                    </div>
+                {% endif %}
+                <form action="/startMatch" method="post">
+                    <input type="text" id="partner_input_field" value="" name="partner_nickname">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="content row">
+            <h2>Logged Out</h2>
+            <p>You should <a href="{{ logged_out }}">log in</a></p>
+        </div>
+    {% endif %}
 {% endblock %}
