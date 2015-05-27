@@ -32,44 +32,45 @@
             </div><!--/input-->
 
 
-            <div class="content row">
-                <div class="words col-md-5">
-                    <div class="guessheader row">
-                        <div class="guesshead col-md-12">
-                            <h3> Your Words </h3>
-                        </div><!--/guesshead-->
-                    </div><!--/guessheader-->
+	<div class="content row">
+		<div class="words col-xs-5">
+			<div class="guessheader row">
+				<div class="guesshead col-xs-12">
+					<h3> Your Words </h3>
+				</div><!--/guesshead-->
+			</div><!--/guessheader-->
 
-                    <div class="guess1 row">
-                        <div class="guesswords col-md-12">
-                            <table class="guesses">
-                                {% for word in user_wordlist %}
-                                    <tr><td>{{ word }}</td></tr>
-                                {% endfor %}
-                            </table><!--/guesses-->
-                        </div><!--/guesswords-->
-                    </div><!--/guess1-->
-                </div>
+			<div class="guess1 row">
+				<div class="guesswords col-xs-12">
+					<table class="guesses">
+						{% for word in user_wordlist %}
+                            <tr><td>{{ word }}</td></tr>
+                        {% endfor %}
+                    </table><!--/guesses--
+					</table><!--/guesses-->
+				</div><!--/guesswords-->
+			</div><!--/guess1-->
+		</div>
 
-                <div class="words col-md-5">
-                    <div class="guessheader row">
-                        <div class="guesshead col-md-12">
-                            <h3> Partner's Words </h3>
-                        </div><!--/guesshead-->
-                    </div><!--/guessheader-->
+		<div class="words col-xs-5">
+			<div class="guessheader row">
+				<div class="guesshead col-xs-12">
+					<h3> Partner's Words </h3>
+				</div><!--/guesshead-->
+			</div><!--/guessheader-->
 
-                    <div class="guess2 row">
-                        <div class="guesswords col-md-12">
-                            <table class="guesses">
-                                {% for word in partner_wordlist %}
-                                    <tr><td>{{ word }}</td></tr>
-                                {% endfor %}
-                            </table><!--/guesses-->
-                        </div><!--/guesswords-->
-                    </div><!--/guess1-->
-                </div>
-            </div><!--/content-->
-        {% else %}
+			<div class="guess2 row">
+				<div class="guesswords col-xs-12">
+					<table class="guesses">
+						{% for word in partner_wordlist %}
+                            <tr><td>{{ word }}</td></tr>
+                        {% endfor %}
+					</table><!--/guesses-->
+				</div><!--/guesswords-->
+			</div><!--/guess1-->
+		</div>
+	</div><!--/content-->
+        {% else %}  
             <div class="content row">
                 <h2>Not playing...</h2>
                 <p>Type the email address of your partner to start</p>
@@ -90,4 +91,5 @@
             <p>You should <a href="{{ logged_out }}">log in</a></p>
         </div>
     {% endif %}
+
 {% endblock %}

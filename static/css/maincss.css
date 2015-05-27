@@ -13,16 +13,19 @@ h3 a{
 }
 
 .login{
-	float:right;
+	float: right;
+	vertical-align: middle;
 }
 
 .header{
 	background-color: #212948;
 	height: 65px;
+	line-height: 65px;
 }
 
 .logo{
-	height: 65px;
+	height: 40px;
+	vertical-align: middle;
 }
 
 .content{
@@ -54,4 +57,13 @@ h3 a{
 
 .guesses td{
 	font-size: 36px;
+}
+
+.footer{
+	text-align: center;
+}
+
+@media (max-width: 500px){
+	.content h3{font-size: 20px;}
+	.content td{font-size: 28px;}
 }

@@ -32,8 +32,7 @@
                   <div class="login col-xs-3">
                       {%if not logged_out %}
                           <ul class="nav navbar-nav navbar-right">
-                              <li><h3>
-                                  Logged in as {{ user }} - <a href="{{ logout_url }}">Log out</a>
+                              <li><h3><a href="{{ logout_url }}">Log out</a>
                               </h3></li>
                           </ul>
                           {% endif %}
@@ -66,5 +65,15 @@
 
 {% block inline_javascript %}{% endblock %}
 </body>
+
+<div class="row">
+  <div class="footer col-md-12">
+    <footer>
+      {%if not logged_out %} 
+        <h3> Logged in as {{user}} </h3>
+      {% endif %}
+    </footer>
+  </div>
+</div>
 
 {% endautoescape %}</html>
