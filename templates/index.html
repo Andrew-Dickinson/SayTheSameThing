@@ -3,5 +3,54 @@
 {% block title %}Say the Same Thing Clone - Home{% endblock %}
 
 {% block content %}
+	<div class="input row">
+		<div class="style">
+				<div class="col-xs-10">
+					<h4> Next Word Guess --- **input thingy okay** </h4>
+				</div>
+
+				<div class="newgame col-xs-2">
+					<button> New Game </button>
+				</div>
+		</div>
+	</div><!--/input-->
+
+	<div class="content row">
+		<div class="words col-md-5">
+			<div class="guessheader row">
+				<div class="guesshead col-md-12">
+					<h3> Your Words </h3>
+				</div><!--/guesshead-->
+			</div><!--/guessheader-->
+
+			<div class="guess1 row">
+				<div class="guesswords col-md-12">
+					<table class="guesses">
+						<tr><td>WORD1<td></tr>
+						<tr><td>WORD2<td></tr>
+						<tr><td>WORD3<td></tr>
+					</table><!--/guesses-->
+				</div><!--/guesswords-->
+			</div><!--/guess1-->
+		</div>
+
+		<div class="words col-md-5">
+			<div class="guessheader row">
+				<div class="guesshead col-md-12">
+					<h3> Partner's Words </h3>
+				</div><!--/guesshead-->
+			</div><!--/guessheader-->
+
+			<div class="guess2 row">
+				<div class="guesswords col-md-12">
+					<table class="guesses">
+						<tr><td>WORD4<td></tr>
+						<tr><td>WORD5<td></tr>
+						<tr><td>WORD6<td></tr>
+					</table><!--/guesses-->
+				</div><!--/guesswords-->
+			</div><!--/guess1-->
+		</div>
+	</div><!--/content-->
 
 {% endblock %}
