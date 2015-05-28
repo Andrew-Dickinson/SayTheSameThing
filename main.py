@@ -39,6 +39,7 @@ class MainHandler(webapp2.RequestHandler):
             user_wordlist = None
             partner_wordlist = None
             match_won = None
+            partner_name = None
             if match_key_id == globals.no_match_active_id:
                 match_active = False
             else:
@@ -48,9 +49,11 @@ class MainHandler(webapp2.RequestHandler):
                 if match.key.parent().parent().id() == account.key.id():
                     user_wordlist = match.user_1_list
                     partner_wordlist = match.user_2_list
+                    partner_name = account_key(match.key.parent().id()).get().nickname
                 else:
                     partner_wordlist = match.user_1_list
                     user_wordlist = match.user_2_list
+                    partner_name = account_key(match.key.parent().parent().id()).get().nickname
 
                 if len(user_wordlist) != len(partner_wordlist):
                     if len(user_wordlist) > len(partner_wordlist):
@@ -73,6 +76,7 @@ class MainHandler(webapp2.RequestHandler):
                                'update_text': update_text,
                                'user_wordlist': user_wordlist,
                                'partner_wordlist': partner_wordlist,
+                               'partner_name': partner_name,
                                }
             template = JINJA_ENVIRONMENT.get_template('templates/index.html')
             self.response.write(template.render(template_values))
