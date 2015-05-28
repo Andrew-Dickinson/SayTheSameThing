@@ -38,6 +38,7 @@ class MainHandler(webapp2.RequestHandler):
 
             user_wordlist = None
             partner_wordlist = None
+            match_won = None
             if match_key_id == globals.no_match_active_id:
                 match_active = False
             else:
@@ -58,6 +59,9 @@ class MainHandler(webapp2.RequestHandler):
                         partner_wordlist[-1] = "*******"
                         user_wordlist.append("-")
 
+                user_wordlist = reversed(user_wordlist)
+                partner_wordlist = reversed(partner_wordlist)
+
             update_text = self.request.get('updated')
 
             #Send html data to browser
@@ -67,8 +71,8 @@ class MainHandler(webapp2.RequestHandler):
                                'match_active': match_active,
                                'match_won': match_won,
                                'update_text': update_text,
-                               'user_wordlist': reversed(user_wordlist),
-                               'partner_wordlist': reversed(partner_wordlist),
+                               'user_wordlist': user_wordlist,
+                               'partner_wordlist': partner_wordlist,
                                }
             template = JINJA_ENVIRONMENT.get_template('templates/index.html')
             self.response.write(template.render(template_values))
@@ -128,9 +132,11 @@ class MatchStart(webapp2.RequestHandler):
         account = globals.get_or_create_account(user)
         partner_name = self.request.get('partner_nickname')
 
+        partner_name = partner_name.replace("@gmail.com", "")
+
         partner = Account.query(Account.nickname == partner_name).fetch()
 
-        if partner[0]:
+        if partner:
             if partner[0].active_match == globals.no_match_active_id:
                 pair_key_val = pair_key(account.key.id(), partner[0].key.id())
                 pair = Pair.get_or_insert(pair_key_val.id(), parent=pair_key_val.parent(), current_match_number=-1)
@@ -147,7 +153,9 @@ class MatchStart(webapp2.RequestHandler):
                 match = Match.get_or_insert(match_key_val.id(), parent=match_key_val.parent())
                 match.put()
 
-                globals.onto_next_match(account, match_key(pair.current_match_number, pair_key_val))
+                past_match = Match.get_or_insert(str(pair.current_match_number), parent=pair_key_val)
+
+                globals.onto_next_match(account, past_match)
 
                 self.redirect('/')
             else:
