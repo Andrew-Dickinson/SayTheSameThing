@@ -65,6 +65,7 @@ h3 a{
 
 @media (max-width: 500px){
 	.content h3{font-size: 18px;}
+	.footer h3{font-size: 12px;}
 	.content td{font-size: 22px;}
 	.logo{height: 30px;}
 }
