@@ -39,6 +39,7 @@ class MainHandler(webapp2.RequestHandler):
             user_wordlist = None
             partner_wordlist = None
             match_won = None
+            winning_word = None
             partner_name = None
             if match_key_id == globals.no_match_active_id:
                 match_active = False
@@ -62,6 +63,9 @@ class MainHandler(webapp2.RequestHandler):
                         partner_wordlist[-1] = "*******"
                         user_wordlist.append("-")
 
+                if match_won:
+                    winning_word = user_wordlist[-1]
+
                 user_wordlist = reversed(user_wordlist)
                 partner_wordlist = reversed(partner_wordlist)
 
@@ -77,6 +81,7 @@ class MainHandler(webapp2.RequestHandler):
                                'user_wordlist': user_wordlist,
                                'partner_wordlist': partner_wordlist,
                                'partner_name': partner_name,
+                               'winning_word': winning_word,
                                }
             template = JINJA_ENVIRONMENT.get_template('templates/index.html')
             self.response.write(template.render(template_values))
