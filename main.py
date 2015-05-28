@@ -209,6 +209,43 @@ class NewGame(webapp2.RequestHandler):
             self.response.write(template.render())
 
 
+class DisconnectAccounts(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        account = globals.get_or_create_account(user)
+        match_key_id = account.active_match
+        match = ndb.Key(urlsafe=match_key_id).get()
+
+        pair = match.key.parent().get()
+
+        match.active = False
+        if match.won != True:
+            match.won = False
+
+        match.put()
+        pair.current_match_number += 1
+        pair.put()
+
+        account.active_match = globals.no_match_active_id
+        account.put()
+
+        if pair.key.id() == account.key.id():
+            partner = account_key(pair.key.parent().id()).get()
+        else:
+            partner = account_key(pair.key.id()).get()
+
+        partner.active_match = globals.no_match_active_id
+        partner.put()
+
+        self.redirect('/')
+
+    def handle_exception(self, exception, debug_mode):
+        if debug_mode:
+            super(type(self), self).handle_exception(exception, debug_mode)
+        else:
+            template = JINJA_ENVIRONMENT.get_template('templates/500.html')
+            self.response.write(template.render())
+
 
 class PageNotFoundHandler(webapp2.RequestHandler):
     def get(self):
@@ -220,6 +257,7 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/startMatch', MatchStart),
     ('/playMatch', MatchSubmit),
+    ('/diconnectAccounts', DisconnectAccounts),
     ('/newMatch', NewGame),
     ('/.*', PageNotFoundHandler)
 ], debug=True)
