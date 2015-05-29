@@ -94,3 +94,14 @@
     {% endif %}
 
 {% endblock %}
+
+{% block inline_javascript %}
+	<script>
+		var game_active = ("{{ match_active }}" != "")
+		setInterval(function () {
+			if (game_active) {
+				location.replace("/");
+			}
+		}, {% if not match_won %}7000{% else %}20000{% endif %});
+	</script>
+{% endblock %}
