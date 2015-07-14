@@ -97,9 +97,10 @@
 
 {% block inline_javascript %}
 	<script>
-		var game_active = ("{{ match_active }}" != "")
+		var game_active = ("{{ match_active }}" != "False");
+        var users_turn = ("{{ users_turn }}" == "True");
 		setInterval(function () {
-			if (game_active) {
+			if (game_active && !users_turn) {
 				location.replace("/");
 			}
 		}, {% if not match_won %}7000{% else %}20000{% endif %});

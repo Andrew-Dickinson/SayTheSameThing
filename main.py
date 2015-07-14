@@ -41,6 +41,7 @@ class MainHandler(webapp2.RequestHandler):
             match_won = None
             winning_word = None
             partner_name = None
+            users_turn = None
             if match_key_id == globals.no_match_active_id:
                 match_active = False
             else:
@@ -59,9 +60,13 @@ class MainHandler(webapp2.RequestHandler):
                 if len(user_wordlist) != len(partner_wordlist):
                     if len(user_wordlist) > len(partner_wordlist):
                         partner_wordlist.append("Waiting...")
+                        users_turn = False
                     else:
+                        users_turn = True
                         partner_wordlist[-1] = "*******"
                         user_wordlist.append("-")
+                else:
+                    users_turn = True
 
                 if match_won:
                     winning_word = user_wordlist[-1]
@@ -73,6 +78,7 @@ class MainHandler(webapp2.RequestHandler):
 
             #Send html data to browser
             template_values = {'user': user.nickname(),
+                               'users_turn': users_turn,
                                'logout_url': logout_url,
                                'match_key': match_key_id,
                                'match_active': match_active,
